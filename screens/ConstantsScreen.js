@@ -64,12 +64,12 @@ export default class ConstantsScreen extends React.Component {
 
 /**
         <ExpoConstant name="expoVersion" />
-        <ExpoConstant name="deviceId" />
         <ExpoConstant name="deviceName" />
         <ExpoConstant name="deviceYearClass" />
         <ExpoConstant name="sessionId" />
         <ExpoConstant name="linkingUri" />
         <ExpoConstant name="statusBarHeight" />
+        <ExpoConstant name="installationId" />
         <ExpoConstant name="isDevice" />
         <ExpoConstant name="appOwnership" />
         <ExpoConstant name="platform" isObject />
