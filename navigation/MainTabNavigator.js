@@ -59,6 +59,7 @@ import LocalizationScreen from '../screens/LocalizationScreen';
 import HapticScreen from '../screens/HapticScreen';
 import StoreReview from '../screens/StoreReview';
 import BranchScreen from '../screens/BranchScreen';
+import SMSScreen from '../screens/SMSScreen';
 
 const styles = StyleSheet.create({
   tabBar: {
@@ -149,6 +150,7 @@ const ExpoApisStackNavigator = createStackNavigator(
     ScreenOrientation: { screen: ScreenOrientationScreen },
     SecureStore: { screen: SecureStoreScreen },
     Sensor: { screen: SensorScreen },
+    SMS: { screen: SMSScreen },
     StoreReview: { screen: StoreReview },
     TextToSpeech: { screen: TextToSpeechScreen },
     Util: { screen: UtilScreen },
