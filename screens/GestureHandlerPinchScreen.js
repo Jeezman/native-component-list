@@ -1,5 +1,5 @@
-import React from 'react';
-import { Animated, StyleSheet, View } from 'react-native';
+import React, { Component } from 'react';
+import { Animated, StyleSheet, Text, View } from 'react-native';
 
 import {
   PanGestureHandler,
@@ -8,13 +8,12 @@ import {
   State,
 } from 'react-native-gesture-handler';
 
-const USE_NATIVE_DRIVER = false;
+const USE_NATIVE_DRIVER = true;
 
-export default class GestureHandlerPinchScreen extends React.Component {
-  static navigationOptions = {
-    title: 'Pinch and Rotate',
-  };
-
+class PinchableBox extends React.Component {
+  panRef = React.createRef();
+  rotationRef = React.createRef();
+  pinchRef = React.createRef();
   constructor(props) {
     super(props);
 
@@ -23,9 +22,10 @@ export default class GestureHandlerPinchScreen extends React.Component {
     this._pinchScale = new Animated.Value(1);
     this._scale = Animated.multiply(this._baseScale, this._pinchScale);
     this._lastScale = 1;
-    this._onPinchGestureEvent = Animated.event([{ nativeEvent: { scale: this._pinchScale } }], {
-      useNativeDriver: USE_NATIVE_DRIVER,
-    });
+    this._onPinchGestureEvent = Animated.event(
+      [{ nativeEvent: { scale: this._pinchScale } }],
+      { useNativeDriver: USE_NATIVE_DRIVER }
+    );
 
     /* Rotation */
     this._rotate = new Animated.Value(0);
@@ -34,9 +34,10 @@ export default class GestureHandlerPinchScreen extends React.Component {
       outputRange: ['-100rad', '100rad'],
     });
     this._lastRotate = 0;
-    this._onRotateGestureEvent = Animated.event([{ nativeEvent: { rotation: this._rotate } }], {
-      useNativeDriver: USE_NATIVE_DRIVER,
-    });
+    this._onRotateGestureEvent = Animated.event(
+      [{ nativeEvent: { rotation: this._rotate } }],
+      { useNativeDriver: USE_NATIVE_DRIVER }
+    );
 
     /* Tilt */
     this._tilt = new Animated.Value(0);
@@ -45,10 +46,12 @@ export default class GestureHandlerPinchScreen extends React.Component {
       outputRange: ['1rad', '1rad', '0rad', '0rad'],
     });
     this._lastTilt = 0;
-    this._onTiltGestureEvent = Animated.event([{ nativeEvent: { translationY: this._tilt } }], {
-      useNativeDriver: USE_NATIVE_DRIVER,
-    });
+    this._onTiltGestureEvent = Animated.event(
+      [{ nativeEvent: { translationY: this._tilt } }],
+      { useNativeDriver: USE_NATIVE_DRIVER }
+    );
   }
+
   _onRotateHandlerStateChange = event => {
     if (event.nativeEvent.oldState === State.ACTIVE) {
       this._lastRotate += event.nativeEvent.rotation;
@@ -70,52 +73,64 @@ export default class GestureHandlerPinchScreen extends React.Component {
       this._tilt.setValue(0);
     }
   };
-
   render() {
-    let tiltRef = React.createRef();
-    let rotationRef = React.createRef();
-    let pinchRef = React.createRef();
-
     return (
       <PanGestureHandler
-        ref={tiltRef}
+        ref={this.panRef}
         onGestureEvent={this._onTiltGestureEvent}
         onHandlerStateChange={this._onTiltGestureStateChange}
         minDist={10}
         minPointers={2}
         maxPointers={2}
         avgTouches>
-        <RotationGestureHandler
-          ref={rotationRef}
-          simultaneousHandlers={pinchRef}
-          onGestureEvent={this._onRotateGestureEvent}
-          onHandlerStateChange={this._onRotateHandlerStateChange}>
-          <PinchGestureHandler
-            ref={pinchRef}
-            simultaneousHandlers={rotationRef}
-            onGestureEvent={this._onPinchGestureEvent}
-            onHandlerStateChange={this._onPinchHandlerStateChange}>
-            <View style={styles.container} collapsable={false}>
-              <Animated.Image
-                style={[
-                  styles.pinchableImage,
-                  {
-                    transform: [
-                      { perspective: 200 },
-                      { scale: this._scale },
-                      { rotate: this._rotateStr },
-                      { rotateX: this._tiltStr },
-                    ],
-                  },
-                ]}
-                source={{
-                  uri: 'https://avatars1.githubusercontent.com/u/6952717',
-                }}
-              />
-            </View>
-          </PinchGestureHandler>
-        </RotationGestureHandler>
+        <Animated.View style={styles.wrapper}>
+          <RotationGestureHandler
+            ref={this.rotationRef}
+            simultaneousHandlers={this.pinchRef}
+            onGestureEvent={this._onRotateGestureEvent}
+            onHandlerStateChange={this._onRotateHandlerStateChange}>
+            <Animated.View style={styles.wrapper}>
+              <PinchGestureHandler
+                ref={this.pinchRef}
+                simultaneousHandlers={this.rotationRef}
+                onGestureEvent={this._onPinchGestureEvent}
+                onHandlerStateChange={this._onPinchHandlerStateChange}>
+                <Animated.View style={styles.container} collapsable={false}>
+                  <Animated.Image
+                    style={[
+                      styles.pinchableImage,
+                      {
+                        transform: [
+                          { perspective: 200 },
+                          { scale: this._scale },
+                          { rotate: this._rotateStr },
+                          { rotateX: this._tiltStr },
+                        ],
+                      },
+                    ]}
+                    source={require('../assets/images/swmansion.png')}
+                  />
+                </Animated.View>
+              </PinchGestureHandler>
+            </Animated.View>
+          </RotationGestureHandler>
+        </Animated.View>
       </PanGestureHandler>
+    );
+  }
+}
+
+export default class GestureHandlerPinchScreen extends React.Component {
+  static navigationOptions = {
+    title: 'Pinch and Rotate',
+  };
+
+  render() {
+    return (
+      <View style={{flex: 1}}>
+        <PinchableBox />
+        <PinchableBox />
+      </View>
     );
   }
 }
@@ -126,10 +141,14 @@ const styles = StyleSheet.create({
     backgroundColor: 'black',
     overflow: 'hidden',
     alignItems: 'center',
+    flex: 1,
     justifyContent: 'center',
   },
   pinchableImage: {
     width: 250,
     height: 250,
+  },
+  wrapper: {
+    flex: 1,
   },
 });

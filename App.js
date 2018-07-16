@@ -27,6 +27,7 @@ export default class App extends React.Component {
       const iconRequires = Object.keys(Icons).map(key => Icons[key]);
       await Promise.all([
         Asset.loadAsync(iconRequires),
+        Asset.loadAsync(require('react-navigation/src/views/assets/back-icon.png')),
         Expo.Font.loadAsync({ 'space-mono': require('./assets/fonts/SpaceMono-Regular.ttf') })
       ]);
     } catch (e) {

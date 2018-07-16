@@ -414,6 +414,10 @@ class Viewer extends Component {
 }
 
 export default class Example extends Component {
+  static navigationOptions = {
+    title: 'ImagePreview using reanimated'
+  };
+
   render() {
     return (
       <View style={styles.container}>
@@ -427,12 +431,13 @@ export default class Example extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
+    paddingTop: 30,
   },
   infoText: {
-    marginBottom: 12,
+    marginHorizontal: 15,
+    marginBottom: 20,
   },
   wrapper: {
     borderColor: 'green',
