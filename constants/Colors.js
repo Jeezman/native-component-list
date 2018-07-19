@@ -16,4 +16,5 @@ export default {
   warningText: '#666804',
   noticeBackground: 'black',
   noticeText: '#fff',
+  listItemTouchableHighlight: '#eee',
 };

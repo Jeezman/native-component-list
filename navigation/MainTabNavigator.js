@@ -16,7 +16,8 @@ import FontScreen from '../screens/FontScreen';
 import GifScreen from '../screens/GifScreen';
 import CalendarsScreen from '../screens/CalendarsScreen';
 import ConstantsScreen from '../screens/ConstantsScreen';
-import ContactsScreen from '../screens/ContactsScreen';
+import ContactsScreen from '../screens/Contacts/ContactsScreen';
+import ContactDetailScreen from '../screens/Contacts/ContactDetailScreen';
 import EventsScreen from '../screens/EventsScreen';
 import AuthSessionScreen from '../screens/AuthSessionScreen';
 import FacebookLoginScreen from '../screens/FacebookLoginScreen';
@@ -133,7 +134,8 @@ const ExpoApisStackNavigator = createStackNavigator(
     Haptic: { screen: HapticScreen },
     Calendars: { screen: CalendarsScreen },
     Constants: { screen: ConstantsScreen },
-    Contacts: { screen: ContactsScreen },
+    Contacts: ContactsScreen,
+    ContactDetail: ContactDetailScreen,
     Events: { screen: EventsScreen },
     Geocoding: { screen: GeocodingScreen },
     ImageManipulator: { screen: ImageManipulatorScreen },
