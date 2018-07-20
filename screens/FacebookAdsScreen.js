@@ -10,21 +10,44 @@ const {
   InterstitialAdManager,
   BannerView,
   withNativeAd,
+  MediaView,
+  AdIconView,
+  TriggerableFragment,
 } = Expo.FacebookAds;
 
 AdSettings.addTestDevice(AdSettings.currentDeviceHash);
 
-const adsManager = new NativeAdsManager('1912255062335197_1912257885668248');
+const adsManager = new NativeAdsManager('629712900716487_629713604049750');
 
 const FullNativeAd = withNativeAd(({ nativeAd }) => (
   <View style={styles.fullad}>
-    {nativeAd.icon && <Image style={styles.icon} source={{ uri: nativeAd.icon }} />}
-    <View>
-      <Text style={styles.title}>{nativeAd.title}</Text>
-      {nativeAd.subtitle && <Text style={styles.subtitle}>{nativeAd.subtitle}</Text>}
-      {nativeAd.description && <Text style={styles.description}>{nativeAd.description}</Text>}
+    <View style={styles.nativeRow}>
+      <AdIconView style={styles.iconView} />
+      <View style={styles.nativeColumn}>
+        <TriggerableFragment>
+          {nativeAd.advertiserName && <Text style={styles.title}>{nativeAd.advertiserName}</Text>}
+          {nativeAd.sponsoredTranslation && (
+            <Text style={styles.description}>{nativeAd.sponsoredTranslation}</Text>
+          )}
+          {nativeAd.headline && <Text style={styles.title}>{nativeAd.headline}</Text>}
+        </TriggerableFragment>
+      </View>
+    </View>
+
+    <View style={styles.nativeRow}>
+      <MediaView style={styles.mediaView} />
+    </View>
+
+    <View style={styles.nativeRow}>
+      <View style={styles.nativeColumn}>
+        {nativeAd.socialContext && <Text style={styles.description}>{nativeAd.socialContext}</Text>}
+        {nativeAd.bodyText && <Text style={styles.description}>{nativeAd.bodyText}</Text>}
+      </View>
+
       <View style={styles.adButton}>
-        <Text>{nativeAd.callToActionText}</Text>
+        <TriggerableFragment>
+          <Text>{nativeAd.callToActionText}</Text>
+        </TriggerableFragment>
       </View>
     </View>
   </View>
@@ -36,7 +59,7 @@ export default class App extends React.Component {
   };
 
   showFullScreenAd = () => {
-    InterstitialAdManager.showAd('1912255062335197_1914986612062042')
+    InterstitialAdManager.showAd('629712900716487_662948944059549')
       .then(didClick => {
         console.log(didClick);
       })
@@ -56,7 +79,7 @@ export default class App extends React.Component {
         <Text style={styles.header}>Banner Ad</Text>
         <BannerView
           type="large"
-          placementId="1912255062335197_1954647211429315"
+          placementId="629712900716487_662949307392846"
           onPress={this.onBannerAdPress}
           onError={this.onBannerAdError}
         />
@@ -72,7 +95,6 @@ export default class App extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 100,
   },
   content: {
     padding: 16,
@@ -94,7 +116,13 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   fullad: {
+    flexDirection: 'column',
+  },
+  nativeRow: {
     flexDirection: 'row',
+  },
+  nativeColumn: {
+    flexDirection: 'column',
   },
   icon: {
     width: 50,
@@ -135,5 +163,13 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#fff',
+  },
+  iconView: {
+    width: 50,
+    height: 50,
+  },
+  mediaView: {
+    width: 400,
+    height: 100,
   },
 });
