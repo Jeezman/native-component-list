@@ -1,6 +1,6 @@
 import Expo from 'expo';
 import React from 'react';
-import { StyleSheet, View, Image, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, ScrollView, Switch } from 'react-native';
 
 import Colors from '../constants/Colors';
 
@@ -12,46 +12,73 @@ const {
   withNativeAd,
   MediaView,
   AdIconView,
-  TriggerableFragment,
+  TriggerableView,
 } = Expo.FacebookAds;
 
 AdSettings.addTestDevice(AdSettings.currentDeviceHash);
 
 const adsManager = new NativeAdsManager('629712900716487_629713604049750');
 
-const FullNativeAd = withNativeAd(({ nativeAd }) => (
-  <View style={styles.fullad}>
-    <View style={styles.nativeRow}>
-      <AdIconView style={styles.iconView} />
-      <View style={styles.nativeColumn}>
-        <TriggerableFragment>
-          {nativeAd.advertiserName && <Text style={styles.title}>{nativeAd.advertiserName}</Text>}
-          {nativeAd.sponsoredTranslation && (
-            <Text style={styles.description}>{nativeAd.sponsoredTranslation}</Text>
-          )}
-          {nativeAd.headline && <Text style={styles.title}>{nativeAd.headline}</Text>}
-        </TriggerableFragment>
-      </View>
-    </View>
+class ChangingFullAd extends React.Component {
+  state = {
+    expanded: true,
+  };
 
-    <View style={styles.nativeRow}>
-      <MediaView style={styles.mediaView} />
-    </View>
+  render() {
+    const { nativeAd } = this.props;
+    return (
+      <View style={styles.fullad}>
+        <View style={[styles.nativeRow, { paddingVertical: 10 }]}>
+          <Text style={[styles.description, { flex: 1 }]}>
+            Toggling this switch should show/hide the bottom row which contains an "Install now"
+            button. When shown, clicking on the button should trigger the ad.
+          </Text>
+          <Switch
+            value={this.state.expanded}
+            onValueChange={() => this.setState({ expanded: !this.state.expanded })}
+          />
+        </View>
+        <View style={styles.nativeRow}>
+          <AdIconView style={styles.iconView} />
+          <View style={styles.nativeColumn}>
+            <TriggerableView>
+              {nativeAd.advertiserName && (
+                <Text style={styles.title}>{nativeAd.advertiserName}</Text>
+              )}
+              {nativeAd.sponsoredTranslation && (
+                <Text style={styles.description}>{nativeAd.sponsoredTranslation}</Text>
+              )}
+              {nativeAd.headline && <Text style={styles.title}>{nativeAd.headline}</Text>}
+            </TriggerableView>
+          </View>
+        </View>
 
-    <View style={styles.nativeRow}>
-      <View style={styles.nativeColumn}>
-        {nativeAd.socialContext && <Text style={styles.description}>{nativeAd.socialContext}</Text>}
-        {nativeAd.bodyText && <Text style={styles.description}>{nativeAd.bodyText}</Text>}
-      </View>
+        <View style={styles.nativeRow}>
+          <MediaView style={styles.mediaView} />
+        </View>
 
-      <View style={styles.adButton}>
-        <TriggerableFragment>
-          <Text>{nativeAd.callToActionText}</Text>
-        </TriggerableFragment>
+        {this.state.expanded && (
+          <View style={styles.nativeRow}>
+            <View style={styles.nativeColumn}>
+              {nativeAd.socialContext && (
+                <Text style={styles.description}>{nativeAd.socialContext}</Text>
+              )}
+              {nativeAd.bodyText && <Text style={styles.description}>{nativeAd.bodyText}</Text>}
+            </View>
+
+            <View style={styles.adButton}>
+              <TriggerableView>
+                <Text>{nativeAd.callToActionText}</Text>
+              </TriggerableView>
+            </View>
+          </View>
+        )}
       </View>
-    </View>
-  </View>
-));
+    );
+  }
+}
+
+const FullNativeAd = withNativeAd(ChangingFullAd);
 
 export default class App extends React.Component {
   static navigationOptions = {
@@ -119,7 +146,10 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
   },
   nativeRow: {
+    maxWidth: '100%',
+    alignSelf: 'stretch',
     flexDirection: 'row',
+    overflow: 'hidden',
   },
   nativeColumn: {
     flexDirection: 'column',
@@ -169,7 +199,7 @@ const styles = StyleSheet.create({
     height: 50,
   },
   mediaView: {
-    width: 400,
+    flex: 1,
     height: 100,
   },
 });
